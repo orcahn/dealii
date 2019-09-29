@@ -108,6 +108,7 @@ private:
   void setup_system();
   void assemble_system();
   void solve();
+  void make_dof_containers();
   void output_results() const;
 
   // And finally we have some member variables. There are variables describing
