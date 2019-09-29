@@ -35,7 +35,7 @@
 #include <deal.II/grid/tria_accessor.h>
 #include <deal.II/grid/tria_iterator.h>
 #include <deal.II/dofs/dof_accessor.h>
-
+#include <deal.II/dofs/dof_containers.h>
 // This file contains the description of the Lagrange interpolation finite
 // element:
 #include <deal.II/fe/fe_q.h>
@@ -562,6 +562,14 @@ void Step3::solve()
   // nodal values of the solution function.
 }
 
+void Step3::make_dof_containers()
+{
+  CellDoFContainer<2,2> cell_dof_container(dof_handler,2);
+  std::vector<int> dof_vector;
+  cell_dof_container.get_dofs(dof_vector);
+  for(auto i = dof_vector.begin(); i != dof_vector.end(); ++i)
+    std::cout << i << std::endl;
+}
 
 // @sect4{Step3::output_results}
 
@@ -616,6 +624,7 @@ void Step3::run()
   setup_system();
   assemble_system();
   solve();
+  make_dof_containers();
   output_results();
 }
 
