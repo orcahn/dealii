@@ -45,7 +45,7 @@ public:
 
   FaceDoFContainer(const DoFHandler<dim>* handler, const FiniteElement<dim>* fe_);
 
-  void get_dofs(std::vector<std::array<unsigned int, 4>> &out);
+  void get_dofs_and_indices(std::vector<std::array<unsigned int, 4>> &out);
 private:
   const DoFHandler<dim>* dof_handler;
   const FiniteElement<dim>* fe;
