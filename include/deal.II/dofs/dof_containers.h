@@ -18,9 +18,7 @@
 // matrices, as shown in previous examples:
 #include <deal.II/dofs/dof_tools.h>
 
-// This file contains the description of the Lagrange interpolation finite
-// element:
-#include <deal.II/fe/fe_dgq.h>
+#include <deal.II/fe/fe.h>
 
 #include <fstream>
 #include <iostream>
@@ -31,12 +29,25 @@ class CellDoFContainer
 {
 public:
   
-  CellDoFContainer(DoFHandler<dim> handler, int degree);
+  CellDoFContainer(const DoFHandler<dim>* handler, const FiniteElement<dim>* fe_);
 
   void get_dofs(std::vector<int> &out);
 private:
 
-  DoFHandler<dim> dof_handler;
-  FE_DGQ<dim> fe; 
+  const DoFHandler<dim>* dof_handler;
+  const FiniteElement<dim>* fe; 
+};
+
+template <int dim, int spacedim>
+class FaceDoFContainer
+{
+public:
+
+  FaceDoFContainer(const DoFHandler<dim>* handler, const FiniteElement<dim>* fe_);
+
+  void get_dofs(std::vector<std::array<unsigned int, 4>> &out);
+private:
+  const DoFHandler<dim>* dof_handler;
+  const FiniteElement<dim>* fe;
 };
 #endif

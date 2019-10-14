@@ -565,11 +565,11 @@ void Step3::solve()
 
 void Step3::make_dof_containers()
 {
-  CellDoFContainer<2,2> cell_dof_container(dof_handler,2);
+  CellDoFContainer<2,2> cell_dof_container(&dof_handler,&fe);
   std::vector<int> dof_vector;
   cell_dof_container.get_dofs(dof_vector);
-  for(auto i = dof_vector.begin(); i != dof_vector.end(); ++i)
-    std::cout << i << std::endl;
+  for(auto it = dof_vector.begin(); it != dof_vector.end(); ++it)
+    std::cout << *it << std::endl;
 }
 
 // @sect4{Step3::output_results}
