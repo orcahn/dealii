@@ -39,6 +39,7 @@
 // This file contains the description of the Lagrange interpolation finite
 // element:
 #include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_dgq.h>
 
 // And this file is needed for the creation of sparsity patterns of sparse
 // matrices, as shown in previous examples:
@@ -116,7 +117,7 @@ private:
   // will specify the exact polynomial degree of the finite element in the
   // constructor of this class)...
   Triangulation<2> triangulation;
-  FE_Q<2>          fe;
+  FE_DGQ<2>          fe;
   DoFHandler<2>    dof_handler;
 
   // ...variables for the sparsity pattern and values of the system matrix
@@ -166,7 +167,7 @@ Step3::Step3()
 void Step3::make_grid()
 {
   GridGenerator::hyper_cube(triangulation, -1, 1);
-  triangulation.refine_global(5);
+  triangulation.refine_global(3);
 
   std::cout << "Number of active cells: " << triangulation.n_active_cells()
             << std::endl;
@@ -564,12 +565,23 @@ void Step3::solve()
 }
 
 void Step3::make_dof_containers()
-{
-  CellDoFContainer<2,2> cell_dof_container(&dof_handler,&fe);
-  std::vector<int> dof_vector;
-  cell_dof_container.get_dofs(dof_vector);
-  for(auto it = dof_vector.begin(); it != dof_vector.end(); ++it)
-    std::cout << *it << std::endl;
+{ 
+  std::cout << fe.dofs_per_cell << std::endl; 
+  CellDoFContainer<4,2> cell_dof_container;
+  cell_dof_container.initialize(dof_handler);
+  std::vector<unsigned int> dof_vector = cell_dof_container.get_cell_dofs();
+  std::vector<double> coordinates;
+  //fill_coordinates(coordinates,cells,triangulation); plotten, Zellnummer an mittelwert der vier koordinaten  
+  cell_dof_container.fill_coordinates(coordinates,dof_handler,dof_handler.get_fe());
+  std::ofstream data_file("coordinates.txt");
+  for(unsigned int c = 0; c <  triangulation.n_active_cells(); ++c) {
+    for(int i = 0; i < 4 ; ++i) {
+      data_file << dof_vector[c] << " "  << c << " ";    
+      data_file << coordinates[(c * 4 * 2 ) + (2 * i)] << " ";
+      data_file << coordinates[(c * 4 * 2) + (2 * i + 1)] << std::endl;;
+    }  
+  }
+  data_file.close();  
 }
 
 // @sect4{Step3::output_results}
@@ -624,7 +636,7 @@ void Step3::run()
   make_grid();
   setup_system();
   assemble_system();
-  solve();
+  //solve();
   make_dof_containers();
   output_results();
 }
